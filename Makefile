@@ -2,7 +2,7 @@
 # Makefile for unix or GCC
 
 CC = gcc
-CFLAGS = -g -O2 -Wall -fno-builtin
+CFLAGS = -g -O2 -Wall -fno-builtin -fPIC
 AR = ar
 RANLIB = ranlib
 INCS = mconf.h
