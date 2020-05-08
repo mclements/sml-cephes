@@ -1,0 +1,4 @@
+*.o
+libcephes.a
+libcephes.so
+*~
