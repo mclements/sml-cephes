@@ -20,7 +20,7 @@ shichi.o sici.o sin.o sindg.o sinh.o spence.o stdtr.o struve.o \
 tan.o tandg.o tanh.o unity.o yn.o zeta.o zetac.o \
 sqrt.o floor.o setprec.o mtherr.o
 
-all: libmd.a
+all: libcephes.a libcephes.so
 
 #mtst dtestvec dcalc paranoia # stamp-timing
 
@@ -58,13 +58,13 @@ paranoia: paranoia.o setprec.o libmd.a
 paranoia.o: paranoia.c
 	$(CC) $(CFLAGS) -c paranoia.c
 
-libmd.a: $(OBJS) $(INCS)
+libcephes.a: $(OBJS) $(INCS)
 # for real Unix:
-	$(AR) rv libmd.a $(OBJS)
+	$(AR) rv libcephes.a $(OBJS)
 # for djgcc MSDOS:
 #	>libmd.rf -rv libmd.a $(OBJS)
 #	$(AR) @libmd.rf
-	$(RANLIB) libmd.a
+	$(RANLIB) libcephes.a
 
 # If the following are all commented out, the C versions
 # will be used by default.
@@ -105,7 +105,20 @@ clean:
 	rm -f mtst
 	rm -f paranoia
 	rm -f dcalc
-	rm -f libmd.a
+	rm -f libcephes.a
+	rm -f libcephes.so
 	rm -f time-it
 	rm -f dtestvec
 
+libcephes.so:
+	$(CC) -shared $(OBJS) -o libcephes.so 
+
+test-mlton:
+	mlton -default-ann 'allowFFI true' -link-opt '-L.' -link-opt '-lcephes' test-mlton.mlb
+	./test-mlton
+	rm test-mlton
+
+test-mlton2:
+	mlton -default-ann 'allowFFI true' -link-opt '-L.' -link-opt '-lcephes' test.sml
+	./test
+	rm test
