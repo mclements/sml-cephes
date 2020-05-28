@@ -10,7 +10,7 @@ AS = as
 
 OBJS = acosh.o airy.o asin.o asinh.o atan.o atanh.o bdtr.o beta.o \
 btdtr.o cbrt.o chbevl.o chdtr.o clog.o cmplx.o const.o \
-cosh.o dawsn.o drand.o ellie.o ellik.o ellpe.o ellpj.o ellpk.o \
+cosh.o dawsn.o drand.o ei.o ellie.o ellik.o ellpe.o ellpj.o ellpk.o \
 exp.o exp10.o exp2.o expn.o expx2.o fabs.o fac.o fdtr.o \
 fresnl.o gamma.o gdtr.o hyp2f1.o hyperg.o i0.o i1.o igami.o \
 incbet.o incbi.o igam.o isnan.o iv.o j0.o j1.o jn.o jv.o k0.o k1.o \
@@ -109,8 +109,10 @@ clean:
 	rm -f libcephes.so
 	rm -f time-it
 	rm -f dtestvec
+	rm -f test-smlsharp.o
+	rm -f test-smlsharp
 
-libcephes.so:
+libcephes.so: libcephes.a
 	$(CC) -shared $(OBJS) -o libcephes.so 
 
 test-mlton:
@@ -122,3 +124,14 @@ test-mlton2:
 	mlton -default-ann 'allowFFI true' -link-opt '-L.' -link-opt '-lcephes' test.sml
 	./test
 	rm test
+
+smlsharp:
+	smlsharp -c cephes-smlsharp.sml
+
+test-smlsharp: all smlsharp
+	smlsharp -c test-smlsharp.sml
+	smlsharp -o test-smlsharp test-smlsharp.smi -L. -lcephes
+	LD_LIBRARY_PATH=. ./test-smlsharp
+
+check-names:
+	nm -D libcephes.so
